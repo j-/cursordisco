@@ -1,0 +1,88 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<!-- title -->
+<title>cursor disco</title>
+
+<!-- lib -->
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+<!-- main -->
+<script>
+(function () {
+	$.create = function (el) {
+		return $(document.createElement(el));
+	};
+
+	var socket = io.connect();
+	var cursors = [];
+
+	var $dancefloor = $.create('div')
+		.addClass('dancefloor');
+
+	var createCursor = function (id) {
+		cursors[id] = $.create('div')
+			.addClass('cursor')
+			.appendTo($dancefloor);
+	};
+
+	var destroyCursor = function (id) {
+		cursors[id].remove();
+		delete cursors[id];
+	};
+
+	var moveCursor = function (id, x, y) {
+		cursors[id]
+			.stop()
+			.animate({
+				left: x,
+				top: y
+			}, 10);
+	};
+
+	var cursorExists = function (id) {
+		var cursor = cursors[id];
+		return cursor !== undefined;
+	};
+
+	socket.on('move', function (id, x, y) {
+		if (!cursorExists(id)) {
+			createCursor(id);
+		}
+		moveCursor(id, x, y);
+	});
+
+	socket.on('disconnect', function (id) {
+		if (cursorExists(id)) {
+			destroyCursor(id);
+		}
+	});
+
+	$(window).mousemove(function (e) {
+		socket.emit('move', e.pageX, e.pageY);
+	});
+
+	$(function () {
+		$(document.body)
+			.append($dancefloor);
+	});
+
+})();
+</script>
+
+<!-- style -->
+<style>
+body {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background: #09f url('/disco.gif') 200px 200px no-repeat;
+}
+.cursor {
+	position: absolute;
+	width: 17px;
+	height: 23px;
+	background: url('/cursor.png') center no-repeat;
+}
+</style>

@@ -1,0 +1,20 @@
+{
+	"name": "cursordisco",
+	"version": "0.0.1",
+	"description": "hit up the cursor disco and dance with your buddies",
+	"author": {
+		"name": "Jamie Hoeks",
+		"email": "j@skeoh.com"
+	},
+	"main": "./index.js",
+	"dependencies": {
+		"express": "3.2.x",
+		"socket.io": "0.9.x",
+		"commander": "2.0.x"
+	},
+	"bin": {
+		"cursordisco": "./bin/cursordisco"
+	},
+	"preferGlobal": true,
+	"license": "MIT"
+}
